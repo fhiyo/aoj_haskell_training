@@ -9,10 +9,10 @@ usage() {
   OPTIONS:
   -c, --clean                       Remove files made when build
   -h, --help                        Print usage
-  -l, --lint [PROBLEM NUMBER]       Check haskell coding style (hlint using)
+  -l, --lint     [PROBLEM NUMBER]   Check haskell coding style (hlint using)
   -m, --make-env [PROBLEM NUMBER]   Create need directory and file
-  -r, --run [PROBLEM NUMBER]        Run haskell program (no input files)
-  -t, --test [PROBLEM NUMBER]       Test the program is green or red
+  -r, --run      [PROBLEM NUMBER]   Run haskell program (no input files)
+  -t, --test     [PROBLEM NUMBER]   Test the program is green or red
   "
 }
 
@@ -21,9 +21,9 @@ isExist() {
     echo "Usage: $0 <file or dir path>" 1>&2
     exit 1
   fi
-  readonly PATH_=$1
-  if [ ! -e ${PATH_} ]; then
-    echo "${PATH_}: No such file or directory" 1>&2
+  path_=$1
+  if [ ! -e ${path_} ]; then
+    echo "${path_}: No such file or directory" 1>&2
     exit 1
   fi
 }

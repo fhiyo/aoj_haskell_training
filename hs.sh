@@ -11,6 +11,7 @@ usage() {
   -h, --help                        Print usage
   -l, --lint     [PROBLEM NUMBER]   Check haskell coding style (hlint using)
   -m, --make-env [PROBLEM NUMBER]   Create need directory and file
+  -o, --copy     [PROBLEM NUMBER]   Copy problem code
   -r, --run      [PROBLEM NUMBER]   Run haskell program (no input files)
   -t, --test     [PROBLEM NUMBER]   Test the program is green or red
   "
@@ -107,6 +108,20 @@ lint() {
   hlint ${SOURCE}
 }
 
+copy() {
+  if [ $# != 1 ]; then
+    echo "Usage: $0 <problem_number>" 1>&2
+    exit 1
+  fi
+
+  readonly PROBLEM=$1
+
+  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+
+  isExist ${SOURCE}
+  cat ${SOURCE} | pbcopy
+}
+
 clean() {
   set +e # Do not exit if exit code is not 0.
   source_dirs=`find ./src -mindepth 1 -maxdepth 1 -type d`
@@ -151,6 +166,15 @@ for opt in "$@"; do
       prob_number="$2"
       shift 2
       makeEnv ${prob_number}
+      ;;
+     '-o' | '--copy' )
+      if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
+        echo "$0: option requires problem number as argument -- $1" 1>&2
+        exit 1
+      fi
+      prob_number="$2"
+      shift 2
+      copy ${prob_number}
       ;;
     '-r' | '--run' )
       if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then

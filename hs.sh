@@ -68,7 +68,7 @@ test_() {
     fi
   done
 
-  if [ -z `ls ${INPUT}` ]; then
+  if [[ -z `ls ${INPUT}` ]]; then
     echo -e "\nNo test files.\n"
   else
     echo -e "\nTest end up.\n"

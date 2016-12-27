@@ -8,6 +8,7 @@ usage() {
 
   OPTIONS:
   -c, --clean                       Remove files made when build
+  -e, --edit     [PROBLEM NUMBER]   Edit source file
   -h, --help                        Print usage
   -l, --lint     [PROBLEM NUMBER]   Check haskell coding style (hlint using)
   -m, --make-env [PROBLEM NUMBER]   Create need directory and file
@@ -27,6 +28,20 @@ isExist() {
     echo "${path_}: No such file or directory" 1>&2
     exit 1
   fi
+}
+
+edit() {
+  if [ $# != 1 ]; then
+    echo "Usage: $0 <problem_number>" 1>&2
+    exit 1
+  fi
+
+  readonly PROBLEM=$1
+
+  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+
+  isExist ${SOURCE}
+  vim ${SOURCE}
 }
 
 run() {
@@ -144,6 +159,15 @@ for opt in "$@"; do
   case "${opt}" in
     '-c' | '--clean' )
       clean
+      ;;
+    '-e' | '--edit' )
+      if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
+        echo "$0: option requires problem number as argument -- $1" 1>&2
+        exit 1
+      fi
+      prob_number="$2"
+      shift 2
+      edit ${prob_number}
       ;;
     '-h' | '--help' )
       usage

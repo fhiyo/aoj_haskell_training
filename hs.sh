@@ -9,6 +9,7 @@ usage() {
   OPTIONS:
   -c, --clean                       Remove files made when build
   -e, --edit     [PROBLEM NUMBER]   Edit source file
+  -g, --git-add  [PROBLEM NUMBER]   Staging [PROBLEM NUMBER] to git
   -h, --help                        Print usage
   -l, --lint     [PROBLEM NUMBER]   Check haskell coding style (hlint using)
   -m, --make-env [PROBLEM NUMBER]   Create need directory and file
@@ -55,6 +56,36 @@ run() {
   readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
   ghc ${SOURCE}
   ./${SOURCE/.hs/}
+}
+
+add_to_git() {
+  if [ $# != 1 ]; then
+    echo "Usage: $0 <problem_number>" 1>&2
+    exit 1
+  fi
+
+  readonly PROBLEM=$1
+
+  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+  readonly INPUT="test/${PROBLEM}/input"
+  readonly OUTPUT="test/${PROBLEM}/output"
+
+  isExist ${SOURCE}
+  isExist ${INPUT}
+  isExist ${OUTPUT}
+
+  git add ${SOURCE}
+
+  if [[ -z `ls ${INPUT}` ]]; then
+    echo -e "\nNo input files.\n"
+  else
+    git add ${INPUT}
+  fi
+  if [[ -z `ls ${OUTPUT}` ]]; then
+    echo -e "\nNo input files.\n"
+  else
+    git add ${OUTPUT}
+  fi
 }
 
 test_() {
@@ -169,6 +200,16 @@ for opt in "$@"; do
       shift 2
       edit ${prob_number}
       ;;
+    '-g' | '--git-add' )
+      if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
+        echo "$0: option requires problem number as argument -- $1" 1>&2
+        exit 1
+      fi
+      prob_number="$2"
+      shift 2
+      add_to_git ${prob_number}
+      ;;
+
     '-h' | '--help' )
       usage
       exit 0

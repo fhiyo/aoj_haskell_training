@@ -49,5 +49,7 @@ AOJのHaskellの問題を解くための環境．
 - `./hs.sh --copy <問題番号>`で書いたコードをクリップボードにコピー
 
 ## TODO
-http://qiita.com/stone_725/items/4290dc12a05ef6f824f0  
+- http://qiita.com/stone_725/items/4290dc12a05ef6f824f0  
 を参考にしてPython (?) で書いたコードをそのまま自動提出するスクリプトを組む
+
+- stackを使った開発サイクルに切り替える

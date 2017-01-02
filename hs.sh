@@ -16,6 +16,9 @@ usage() {
   -o, --copy     [PROBLEM NUMBER]   Copy problem code
   -r, --run      [PROBLEM NUMBER]   Run haskell program (no input files)
   -t, --test     [PROBLEM NUMBER]   Test the program is green or red
+
+  --add-input    [PROBLEM NUMBER]   Add input text file
+  --add-output   [PROBLEM NUMBER]   Add output text file
   "
 }
 
@@ -29,6 +32,53 @@ isExist() {
     echo "${path_}: No such file or directory" 1>&2
     exit 1
   fi
+}
+
+generate-new-test-number() {
+  if [ $# != 2 ]; then
+    echo "Usage: $0 <problem_number> <input/output>" 1>&2
+    exit 1
+  fi
+
+  readonly local PROBLEM_=$1
+  readonly local DIR="test/${PROBLEM_}/$2"
+
+  isExist ${DIR}
+
+  if [[ -z `ls ${DIR}` ]]; then
+    new_test_num=1
+  else
+    new_test_num=`ls test/${PROBLEM_}/input | sort -n | tail -1 | xargs -I{} basename {} .txt`
+    ((new_test_num++))
+  fi
+}
+
+add-input() {
+  if [ $# != 1 ]; then
+    echo "Usage: $0 <problem_number>" 1>&2
+    exit 1
+  fi
+
+  readonly local PROBLEM=$1
+  readonly local INPUT="test/${PROBLEM}/input"
+
+  isExist ${INPUT}
+  generate-new-test-number ${PROBLEM} "input"
+  vim ${INPUT}/${new_test_num}.txt
+}
+
+add-output() {
+  if [ $# != 1 ]; then
+    echo "Usage: $0 <problem_number>" 1>&2
+    exit 1
+  fi
+
+  readonly local PROBLEM=$1
+  readonly local OUTPUT="test/${PROBLEM}/output"
+
+  isExist ${OUTPUT}
+  generate-new-test-number ${PROBLEM} "output"
+  vim ${OUTPUT}/${new_test_num}.txt
 }
 
 edit() {
@@ -261,5 +311,24 @@ for opt in "$@"; do
       test_ ${prob_number}
       ;;
 
+    '--add-input' )
+      if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
+        echo "$0: option requires problem number as argument -- $1" 1>&2
+        exit 1
+      fi
+      prob_number="$2"
+      shift 2
+      add-input ${prob_number}
+      ;;
+
+     '--add-output' )
+      if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
+        echo "$0: option requires problem number as argument -- $1" 1>&2
+        exit 1
+      fi
+      prob_number="$2"
+      shift 2
+      add-output ${prob_number}
+      ;;
   esac
 done

@@ -24,7 +24,7 @@ isExist() {
     echo "Usage: $0 <file or dir path>" 1>&2
     exit 1
   fi
-  path_=$1
+  local path_=$1
   if [ ! -e ${path_} ]; then
     echo "${path_}: No such file or directory" 1>&2
     exit 1
@@ -37,9 +37,8 @@ edit() {
     exit 1
   fi
 
-  readonly PROBLEM=$1
-
-  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+  readonly local PROBLEM=$1
+  readonly local SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
 
   isExist ${SOURCE}
   vim ${SOURCE}
@@ -51,9 +50,8 @@ run() {
     exit 1
   fi
 
-  readonly PROBLEM=$1
-
-  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+  readonly local PROBLEM=$1
+  readonly local SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
   ghc ${SOURCE}
   ./${SOURCE/.hs/}
 }
@@ -64,11 +62,10 @@ add_to_git() {
     exit 1
   fi
 
-  readonly PROBLEM=$1
-
-  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
-  readonly INPUT="test/${PROBLEM}/input"
-  readonly OUTPUT="test/${PROBLEM}/output"
+  readonly local PROBLEM=$1
+  readonly local SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+  readonly local INPUT="test/${PROBLEM}/input"
+  readonly local OUTPUT="test/${PROBLEM}/output"
 
   isExist ${SOURCE}
   isExist ${INPUT}
@@ -95,11 +92,11 @@ test_() {
     exit 1
   fi
 
-  readonly PROBLEM=$1
+  readonly local PROBLEM=$1
 
-  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
-  readonly INPUT="test/${PROBLEM}/input"
-  readonly OUTPUT="test/${PROBLEM}/output"
+  readonly local SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+  readonly local INPUT="test/${PROBLEM}/input"
+  readonly local OUTPUT="test/${PROBLEM}/output"
 
   isExist ${SOURCE}
   isExist ${INPUT}
@@ -129,11 +126,10 @@ makeEnv() {
     exit 1
   fi
 
-  readonly PROBLEM=$1
-
-  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
-  readonly INPUT="test/${PROBLEM}/input"
-  readonly OUTPUT="test/${PROBLEM}/output"
+  readonly local PROBLEM=$1
+  readonly local SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+  readonly local INPUT="test/${PROBLEM}/input"
+  readonly local OUTPUT="test/${PROBLEM}/output"
 
   mkdir -p src/${PROBLEM}
   touch ${SOURCE}
@@ -146,9 +142,8 @@ lint() {
     exit 1
   fi
 
-  readonly PROBLEM=$1
-
-  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+  readonly local PROBLEM=$1
+  readonly local SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
 
   isExist ${SOURCE}
   hlint ${SOURCE}
@@ -160,9 +155,8 @@ copy() {
     exit 1
   fi
 
-  readonly PROBLEM=$1
-
-  readonly SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
+  readonly local PROBLEM=$1
+  readonly local SOURCE="src/${PROBLEM}/${PROBLEM}.hs"
 
   isExist ${SOURCE}
   cat ${SOURCE} | pbcopy
@@ -191,6 +185,7 @@ for opt in "$@"; do
     '-c' | '--clean' )
       clean
       ;;
+
     '-e' | '--edit' )
       if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
         echo "$0: option requires problem number as argument -- $1" 1>&2
@@ -200,6 +195,7 @@ for opt in "$@"; do
       shift 2
       edit ${prob_number}
       ;;
+
     '-g' | '--git-add' )
       if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
         echo "$0: option requires problem number as argument -- $1" 1>&2
@@ -214,6 +210,7 @@ for opt in "$@"; do
       usage
       exit 0
       ;;
+
     '-l' | '--lint' )
       if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
         echo "$0: option requires problem number as argument -- $1" 1>&2
@@ -223,6 +220,7 @@ for opt in "$@"; do
       shift 2
       lint ${prob_number}
       ;;
+
     '-m' | '--make-env' )
       if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
         echo "$0: option requires problem number as argument -- $1" 1>&2
@@ -232,6 +230,7 @@ for opt in "$@"; do
       shift 2
       makeEnv ${prob_number}
       ;;
+
      '-o' | '--copy' )
       if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
         echo "$0: option requires problem number as argument -- $1" 1>&2
@@ -241,6 +240,7 @@ for opt in "$@"; do
       shift 2
       copy ${prob_number}
       ;;
+
     '-r' | '--run' )
       if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
         echo "$0: option requires problem number as argument -- $1" 1>&2
@@ -250,6 +250,7 @@ for opt in "$@"; do
       shift 2
       run ${prob_number}
       ;;
+
     '-t' | '--test' )
       if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
         echo "$0: option requires problem number as argument -- $1" 1>&2
@@ -259,5 +260,6 @@ for opt in "$@"; do
       shift 2
       test_ ${prob_number}
       ;;
+
   esac
 done

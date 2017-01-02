@@ -48,7 +48,7 @@ generate-new-test-number() {
   if [[ -z `ls ${DIR}` ]]; then
     new_test_num=1
   else
-    new_test_num=`ls test/${PROBLEM_}/input | sort -n | tail -1 | xargs -I{} basename {} .txt`
+    new_test_num=`ls ${DIR} | sort -n | tail -1 | xargs -I{} basename {} .txt`
     ((new_test_num++))
   fi
 }
